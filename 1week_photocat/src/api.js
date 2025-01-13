@@ -16,4 +16,7 @@ export const api = {
   fetchDetailCat: (id) => {
     return request(`${API_ENDPOINT}/api/cats/${id}`);
   },
+  fetchRandDomCats: () => {
+    return request(`${API_ENDPOINT}/api/cats/random50`);
+  },
 };

@@ -2,6 +2,7 @@ import { api } from "./api.js";
 import DarkModeButton from "./components/DarkModeButton.js";
 import ImageInfo from "./components/ImageInfo.js";
 import Loading from "./components/Loading.js";
+import RandomButton from "./components/RandomButton.js";
 import SearchInput from "./components/SearchInput.js";
 import SearchResult from "./components/SearchResult.js";
 import { restoreLastSearch, storeSearch } from "./utils/storeLocalStorage.js";
@@ -28,6 +29,16 @@ export default class App {
         this.loading.setState(false);
         this.setState(data);
         storeSearch(keyword, data);
+      },
+    });
+
+    this.randomButton = new RandomButton({
+      $target,
+      onClick: async () => {
+        this.loading.setState(true);
+        const { data } = await api.fetchRandDomCats();
+        this.loading.setState(false);
+        this.setState(data);
       },
     });
 
