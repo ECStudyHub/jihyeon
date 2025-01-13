@@ -13,4 +13,7 @@ export const api = {
   fetchCats: (keyword) => {
     return request(`${API_ENDPOINT}/api/cats/search?q=${keyword}`);
   },
+  fetchDetailCat: (id) => {
+    return request(`${API_ENDPOINT}/api/cats/${id}`);
+  },
 };

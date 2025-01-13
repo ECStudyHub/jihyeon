@@ -2,15 +2,17 @@ export default class ImageInfo {
   $imageInfo = null;
   data = null;
 
-  constructor({ $target, data }) {
+  constructor({ $target, data, onClose }) {
     const $imageInfo = document.createElement("div");
     $imageInfo.className = "ImageInfo";
     this.$imageInfo = $imageInfo;
     $target.appendChild($imageInfo);
 
     this.data = data;
+    this.onClose = onClose;
 
     this.render();
+    window.addEventListener("resize", this.handleResize.bind(this));
   }
 
   setState(nextData) {
@@ -18,23 +20,62 @@ export default class ImageInfo {
     this.render();
   }
 
+  handleResize() {
+    if (this.data.visible) {
+      this.adjustWidth();
+    }
+  }
+
+  adjustWidth() {
+    const deviceWidth = window.innerWidth;
+    const $contentWrapper = this.$imageInfo.querySelector(".content-wrapper");
+    if (deviceWidth <= 768) {
+      $contentWrapper.style.width = `${deviceWidth}px`;
+    }
+  }
+
+  handleClose() {
+    const $closeButton = this.$imageInfo.querySelector(".close");
+    $closeButton.addEventListener("click", () => {
+      this.onClose();
+    });
+
+    const $contentWrapper = this.$imageInfo.querySelector(".content-wrapper");
+    $contentWrapper.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+
+    this.$imageInfo.addEventListener("click", (e) => {
+      this.onClose();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" || e.keyCode === 27) {
+        this.onClose();
+      }
+    });
+  }
+
   render() {
     if (this.data.visible) {
       const { name, url, temperament, origin } = this.data.image;
 
       this.$imageInfo.innerHTML = `
-          <div class="content-wrapper">
-            <div class="title">
-              <span>${name}</span>
-              <div class="close">x</div>
-            </div>
-            <img src="${url}" alt="${name}"/>        
-            <div class="description">
-              <div>성격: ${temperament}</div>
-              <div>태생: ${origin}</div>
-            </div>
-          </div>`;
+        <div class="content-wrapper">
+          <div class="title">
+            <h2>${name}</h2>
+            <button class="close">x</button>
+          </div>
+          <img src="${url}" alt="${name}"/>        
+          <div class="description">
+            <p>성격: ${temperament}</p>
+            <p>태생: ${origin}</p>
+          </div>
+        </div>`;
       this.$imageInfo.style.display = "block";
+
+      this.adjustWidth();
+      this.handleClose();
     } else {
       this.$imageInfo.style.display = "none";
     }
