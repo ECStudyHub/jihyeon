@@ -4,6 +4,7 @@ import ImageInfo from "./components/ImageInfo.js";
 import Loading from "./components/Loading.js";
 import SearchInput from "./components/SearchInput.js";
 import SearchResult from "./components/SearchResult.js";
+import { restoreLastSearch, storeSearch } from "./utils/storeLocalStorage.js";
 
 console.log("app is running!");
 
@@ -23,8 +24,10 @@ export default class App {
       $target,
       onSearch: async (keyword) => {
         this.loading.setState(true);
-        await api.fetchCats(keyword).then(({ data }) => this.setState(data));
+        const { data } = await api.fetchCats(keyword);
         this.loading.setState(false);
+        this.setState(data);
+        storeSearch(keyword, data);
       },
     });
 
@@ -56,6 +59,8 @@ export default class App {
         });
       },
     });
+
+    restoreLastSearch(this.setState.bind(this));
   }
 
   setState(nextData) {
