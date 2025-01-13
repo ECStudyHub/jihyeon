@@ -16,6 +16,16 @@ export default class SearchInput {
     });
 
     console.log("SearchInput created.", this);
+
+    $searchInput.focus();
+    this.onReset();
   }
+
+  onReset() {
+    this.$searchInput.addEventListener("click", () => {
+      this.$searchInput.value = "";
+    });
+  }
+
   render() {}
 }

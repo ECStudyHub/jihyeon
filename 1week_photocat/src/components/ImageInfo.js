@@ -58,20 +58,28 @@ export default class ImageInfo {
 
   render() {
     if (this.data.visible) {
-      const { name, url, temperament, origin } = this.data.image;
-
-      this.$imageInfo.innerHTML = `
+      if (!this.data.image) {
+        this.$imageInfo.innerHTML = `
         <div class="content-wrapper">
-          <div class="title">
-            <h2>${name}</h2>
-            <button class="close">x</button>
-          </div>
-          <img src="${url}" alt="${name}"/>        
-          <div class="description">
-            <p>성격: ${temperament}</p>
-            <p>태생: ${origin}</p>
-          </div>
+          <p>결과 값이 존재 하지 않습니다.</p>
         </div>`;
+      } else {
+        const { name, url, temperament, origin } = this.data.image;
+
+        this.$imageInfo.innerHTML = `
+          <div class="content-wrapper">
+            <div class="title">
+              <h2>${name}</h2>
+              <button class="close">x</button>
+            </div>
+            <img src="${url}" alt="${name}"/>        
+            <div class="description">
+              <p>성격: ${temperament}</p>
+              <p>태생: ${origin}</p>
+            </div>
+          </div>`;
+      }
+
       this.$imageInfo.style.display = "block";
 
       this.adjustWidth();

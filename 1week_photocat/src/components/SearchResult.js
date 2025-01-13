@@ -20,6 +20,10 @@ export default class SearchResult {
   }
 
   render() {
+    if (this.data.length === 0) {
+      return (this.$searchResult.innerHTML = `<span> 검색 결과가 없습니다. </span>`);
+    }
+
     this.$searchResult.innerHTML = this.data
       .map(
         (cat) => `

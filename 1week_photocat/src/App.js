@@ -1,6 +1,7 @@
 import { api } from "./api.js";
 import DarkModeButton from "./components/DarkModeButton.js";
 import ImageInfo from "./components/ImageInfo.js";
+import Loading from "./components/Loading.js";
 import SearchInput from "./components/SearchInput.js";
 import SearchResult from "./components/SearchResult.js";
 
@@ -12,6 +13,7 @@ export default class App {
 
   constructor($target) {
     this.$target = $target;
+    this.loading = new Loading({ $target, state: false });
 
     this.$darkMode = new DarkModeButton({
       $target,
@@ -19,21 +21,25 @@ export default class App {
 
     this.searchInput = new SearchInput({
       $target,
-      onSearch: (keyword) => {
-        api.fetchCats(keyword).then(({ data }) => this.setState(data));
+      onSearch: async (keyword) => {
+        this.loading.setState(true);
+        await api.fetchCats(keyword).then(({ data }) => this.setState(data));
+        this.loading.setState(false);
       },
     });
 
     this.searchResult = new SearchResult({
       $target,
       initialData: this.data,
-      onClick: (image) => {
-        api.fetchDetailCat(image.id).then(({ data }) => {
+      onClick: async (image) => {
+        this.loading.setState(true);
+        await api.fetchDetailCat(image.id).then(({ data }) => {
           this.imageInfo.setState({
             visible: true,
             image: data,
           });
         });
+        this.loading.setState(false);
       },
     });
 
