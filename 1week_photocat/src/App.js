@@ -1,7 +1,7 @@
 import { api } from "./api.js";
-import ImageInfo from "./ImageInfo.js";
-import SearchInput from "./SearchInput.js";
-import SearchResult from "./SearchResult.js";
+import ImageInfo from "./components/ImageInfo.js";
+import SearchInput from "./components/SearchInput.js";
+import SearchResult from "./components/SearchResult.js";
 
 console.log("app is running!");
 
