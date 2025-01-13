@@ -1,4 +1,5 @@
 import { api } from "./api.js";
+import DarkModeButton from "./components/DarkModeButton.js";
 import ImageInfo from "./components/ImageInfo.js";
 import SearchInput from "./components/SearchInput.js";
 import SearchResult from "./components/SearchResult.js";
@@ -11,6 +12,10 @@ export default class App {
 
   constructor($target) {
     this.$target = $target;
+
+    this.$darkMode = new DarkModeButton({
+      $target,
+    });
 
     this.searchInput = new SearchInput({
       $target,
@@ -35,6 +40,12 @@ export default class App {
       data: {
         visible: false,
         image: null,
+      },
+      onClose: () => {
+        this.imageInfo.setState({
+          visible: false,
+          image: null,
+        });
       },
     });
   }
