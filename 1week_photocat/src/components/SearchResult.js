@@ -30,10 +30,13 @@ export default class SearchResult {
       )
       .join("");
 
-    this.$searchResult.querySelectorAll(".item").forEach(($item, index) => {
-      $item.addEventListener("click", () => {
+    this.$searchResult.addEventListener("click", (e) => {
+      const $item = e.target.closest(".item");
+      if ($item) {
+        const items = Array.from(this.$searchResult.querySelectorAll(".item"));
+        const index = items.indexOf($item);
         this.onClick(this.data[index]);
-      });
+      }
     });
   }
 }
