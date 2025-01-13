@@ -69,6 +69,18 @@ body * {
   display: inline-block;
   margin: 0 0 1em;
   width: 100%;
+
+  position: relative;
+}
+.SearchResult .item:hover::after {
+  content: attr(data-name);
+  position: absolute;
+  left: 0;
+  background: #333;
+  color: #fff;
+  padding: 4px;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .SearchInput {

@@ -27,7 +27,7 @@ export default class SearchResult {
     this.$searchResult.innerHTML = this.data
       .map(
         (cat) => `
-            <div class="item">
+            <div class="item" data-name="${cat.name}">
               <img src=${cat.url} alt=${cat.name} />
             </div>
           `
