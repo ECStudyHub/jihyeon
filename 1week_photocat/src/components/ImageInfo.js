@@ -1,91 +1,95 @@
-export default class ImageInfo {
-  $imageInfo = null;
-  data = null;
+import Component from "./Component.js";
 
-  constructor({ $target, data, onClose }) {
-    const $imageInfo = document.createElement("div");
-    $imageInfo.className = "ImageInfo";
-    this.$imageInfo = $imageInfo;
-    $target.appendChild($imageInfo);
+export default class ImageInfo extends Component {
+  constructor($target, props) {
+    const $container = document.createElement("div");
+    $container.className = "image-info";
+    $target.appendChild($container);
+    super($container, props);
+  }
 
-    this.data = data;
-    this.onClose = onClose;
+  setup() {
+    this.state = {
+      visible: this.props.data.visible,
+      image: this.props.data.image,
+    };
 
-    this.render();
     window.addEventListener("resize", this.handleResize.bind(this));
   }
 
-  setState(nextData) {
-    this.data = nextData;
-    this.render();
+  template() {
+    const { visible, image } = this.state;
+    if (!visible) return "";
+
+    if (!image) {
+      return `
+        <div class="ImageInfo">
+          <div class="content-wrapper">
+            <p>결과 값이 존재 하지 않습니다.</p>
+          </div>
+        </div>`;
+    }
+
+    const { name, url, temperament, origin } = image;
+    return `
+      <div class="ImageInfo">
+        <div class="content-wrapper">
+          <div class="title">
+            <h2>${name}</h2>
+            <button class="close">x</button>
+          </div>
+          <img src="${url}" alt="${name}"/>        
+          <div class="description">
+            <p>성격: ${temperament}</p>
+            <p>태생: ${origin}</p>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  mounted() {
+    if (this.state.visible) {
+      this.adjustWidth();
+    }
+  }
+
+  setEvent() {
+    const { onClose } = this.props;
+
+    // 닫기 버튼 클릭
+    this.addEvent("click", ".close", () => {
+      onClose();
+    });
+
+    // content-wrapper 클릭 전파 방지
+    this.addEvent("click", ".content-wrapper", (e) => {
+      e.stopPropagation();
+    });
+
+    // 배경 클릭시 닫기
+    this.addEvent("click", ".ImageInfo", () => {
+      onClose();
+    });
+
+    // ESC 키 입력시 닫기
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" || e.keyCode === 27) {
+        onClose();
+      }
+    });
   }
 
   handleResize() {
-    if (this.data.visible) {
+    if (this.state.visible) {
       this.adjustWidth();
     }
   }
 
   adjustWidth() {
     const deviceWidth = window.innerWidth;
-    const $contentWrapper = this.$imageInfo.querySelector(".content-wrapper");
-    if (deviceWidth <= 768) {
+    const $contentWrapper = this.$target.querySelector(".content-wrapper");
+    if ($contentWrapper && deviceWidth <= 768) {
       $contentWrapper.style.width = `${deviceWidth}px`;
-    }
-  }
-
-  handleClose() {
-    const $closeButton = this.$imageInfo.querySelector(".close");
-    $closeButton.addEventListener("click", () => {
-      this.onClose();
-    });
-
-    const $contentWrapper = this.$imageInfo.querySelector(".content-wrapper");
-    $contentWrapper.addEventListener("click", (e) => {
-      e.stopPropagation();
-    });
-
-    this.$imageInfo.addEventListener("click", (e) => {
-      this.onClose();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" || e.keyCode === 27) {
-        this.onClose();
-      }
-    });
-  }
-
-  render() {
-    if (this.data.visible) {
-      if (!this.data.image) {
-        this.$imageInfo.innerHTML = `
-        <div class="content-wrapper">
-          <p>결과 값이 존재 하지 않습니다.</p>
-        </div>`;
-      } else {
-        const { name, url, temperament, origin } = this.data.image;
-
-        this.$imageInfo.innerHTML = `
-          <div class="content-wrapper">
-            <div class="title">
-              <h2>${name}</h2>
-              <button class="close">x</button>
-            </div>
-            <img src="${url}" alt="${name}"/>        
-            <div class="description">
-              <p>성격: ${temperament}</p>
-              <p>태생: ${origin}</p>
-            </div>
-          </div>`;
-      }
-
-      this.$imageInfo.style.display = "block";
-
-      this.adjustWidth();
-      this.handleClose();
-    } else {
-      this.$imageInfo.style.display = "none";
     }
   }
 }

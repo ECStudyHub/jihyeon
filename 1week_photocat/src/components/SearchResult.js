@@ -1,30 +1,26 @@
-export default class SearchResult {
-  $searchResult = null;
-  data = null;
-  onClick = null;
+import Component from "./Component.js";
 
-  constructor({ $target, initialData, onClick }) {
-    this.$searchResult = document.createElement("div");
-    this.$searchResult.className = "SearchResult";
-    $target.appendChild(this.$searchResult);
-
-    this.data = initialData;
-    this.onClick = onClick;
-
-    this.render();
+export default class SearchResult extends Component {
+  constructor($target, props) {
+    const $container = document.createElement("div");
+    $container.className = "search-result";
+    $target.appendChild($container);
+    super($container, props);
+  }
+  setup() {
+    this.state = {
+      data: this.props.initialData,
+    };
   }
 
-  setState(nextData) {
-    this.data = nextData;
-    this.render();
-  }
+  template() {
+    const { data } = this.state;
 
-  render() {
-    if (this.data.length === 0) {
-      return (this.$searchResult.innerHTML = `<span> 검색 결과가 없습니다. </span>`);
+    if (data.length === 0) {
+      return `<span> 검색 결과가 없습니다. </span>`;
     }
 
-    this.$searchResult.innerHTML = this.data
+    return `${data
       .map(
         (cat) => `
             <div class="item" data-name="${cat.name}">
@@ -32,14 +28,17 @@ export default class SearchResult {
             </div>
           `
       )
-      .join("");
+      .join("")}`;
+  }
 
-    this.$searchResult.addEventListener("click", (e) => {
+  setEvent() {
+    const { onClick } = this.props;
+    this.addEvent("click", ".item", (e) => {
       const $item = e.target.closest(".item");
       if ($item) {
-        const items = Array.from(this.$searchResult.querySelectorAll(".item"));
+        const items = Array.from(this.$target.querySelectorAll(".item"));
         const index = items.indexOf($item);
-        this.onClick(this.data[index]);
+        this.onClick(this.state.data[index]);
       }
     });
   }

@@ -1,29 +1,34 @@
-export default class SearchInput {
-  constructor({ $target, onSearch }) {
-    const $searchInput = document.createElement("input");
-    this.$searchInput = $searchInput;
-    this.$searchInput.placeholder = "고양이를 검색해보세요.|";
+import Component from "./Component.js";
+export default class SearchInput extends Component {
+  constructor($target, props) {
+    const $container = document.createElement("div");
+    $container.className = "search-input";
+    $target.appendChild($container);
+    super($container, props);
+  }
+  template() {
+    return `<input type="text" class="SearchInput" placeholder="고양이를 검색해보세요.|" />`;
+  }
 
-    $searchInput.className = "SearchInput";
-    $target.appendChild($searchInput);
+  mounted() {
+    const $input = this.$target.querySelector(".SearchInput");
+    if ($input) {
+      $input.focus();
+    }
+  }
 
-    $searchInput.addEventListener("keyup", (e) => {
-      if (e.keyCode === 13) {
-        onSearch(e.target.value);
+  setEvent() {
+    const { onSearch } = this.props;
+    this.addEvent("keyup", ".SearchInput", (e) => {
+      if (e.key !== "Enter") return;
+      onSearch(e.target.value);
+    });
+
+    this.addEvent("click", ".SearchInput", (e) => {
+      const $input = e.target.closest(".SearchInput");
+      if ($input) {
+        $input.value = "";
       }
     });
-
-    console.log("SearchInput created.", this);
-
-    $searchInput.focus();
-    this.onReset();
   }
-
-  onReset() {
-    this.$searchInput.addEventListener("click", () => {
-      this.$searchInput.value = "";
-    });
-  }
-
-  render() {}
 }
