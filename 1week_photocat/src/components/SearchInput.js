@@ -1,6 +1,4 @@
-const TEMPLATE = '<input type="text">';
-
-class SearchInput {
+export default class SearchInput {
   constructor({ $target, onSearch }) {
     const $searchInput = document.createElement("input");
     this.$searchInput = $searchInput;
@@ -16,6 +14,16 @@ class SearchInput {
     });
 
     console.log("SearchInput created.", this);
+
+    $searchInput.focus();
+    this.onReset();
   }
+
+  onReset() {
+    this.$searchInput.addEventListener("click", () => {
+      this.$searchInput.value = "";
+    });
+  }
+
   render() {}
 }

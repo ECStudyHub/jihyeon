@@ -1,16 +1,24 @@
-/*@font-face {
+@font-face {
   font-family: "Goyang";
   src: url("fonts/Goyang.woff") format("woff");
   font-weight: normal;
-  font-style: normal; 
-}*/
+  font-style: normal;
+}
+
+:root {
+  --bg-color: #fff;
+  --text-color: #000;
+}
 
 html {
   box-sizing: border-box;
 }
 
 body * {
-  /*font-family: Goyang;*/
+  font-family: Goyang;
+
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 *,
@@ -32,6 +40,24 @@ body * {
   grid-gap: 10px;
 }
 
+@media (max-width: 992px) {
+  .SearchResult {
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .SearchResult {
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .SearchResult {
+    grid-template-columns: repeat(1, minmax(250px, 1fr));
+  }
+}
+
 .SearchResult img {
   width: 100%;
   height: 100%;
@@ -43,6 +69,18 @@ body * {
   display: inline-block;
   margin: 0 0 1em;
   width: 100%;
+
+  position: relative;
+}
+.SearchResult .item:hover::after {
+  content: attr(data-name);
+  position: absolute;
+  left: 0;
+  background: #333;
+  color: #fff;
+  padding: 4px;
+  font-size: 14px;
+  white-space: nowrap;
 }
 
 .SearchInput {
@@ -84,11 +122,44 @@ body * {
   width: 100%;
 }
 
-/* dark mode 처리
 @media (prefers-color-scheme: dark) {
-  body {
-    background-color: #000;
-    color: white;
+  :root {
+    --bg-color: #000;
+    --text-color: #fff;
   }
 }
-*/
+
+.dark-mode {
+  --bg-color: #000;
+  --text-color: #fff;
+}
+
+.light-mode {
+  --bg-color: #fff;
+  --text-color: #000;
+}
+
+.loading {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  background-color: rgba(255, 2550, 00, 0.3);
+  z-index: 1000;
+}
+.loading div {
+  margin-top: 40%;
+  font-size: 2em;
+  font-weight: bold;
+  color: var(--text-color);
+  background-color: transparent;
+}
