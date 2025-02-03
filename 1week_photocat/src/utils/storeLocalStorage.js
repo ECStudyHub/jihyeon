@@ -8,7 +8,13 @@ export function restoreLastSearch(setState) {
   const lastData = localStorage.getItem("lastData");
 
   if (lastKeyword && lastData) {
-    setState(JSON.parse(lastData));
-    document.querySelector(".SearchInput").value = lastKeyword;
+    return {
+      lastKeyword,
+      lastData: JSON.parse(lastData),
+    };
   }
+  return {
+    lastKeyword: "",
+    lastData: "",
+  };
 }

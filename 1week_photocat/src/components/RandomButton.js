@@ -8,7 +8,7 @@ export default class RandomButton extends Component {
     super($container, props);
   }
   template() {
-    return `<button class="random-button" >랜덤한 고양이를 받아보세요.</button>`;
+    return `<button class="random-button" type="button" >랜덤한 고양이를 받아보세요.</button>`;
   }
 
   setEvent() {

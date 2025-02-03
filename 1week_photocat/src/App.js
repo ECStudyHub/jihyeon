@@ -12,8 +12,10 @@ console.log("app is running!");
 
 export default class App extends Component {
   async setup() {
+    const { lastData, lastKeyword } = restoreLastSearch();
+
     this.state = {
-      cats: [],
+      cats: lastData ?? [],
       isLoading: false,
       modalVisible: false,
       selectedCat: null,
@@ -27,16 +29,17 @@ export default class App extends Component {
     this.darkMode = new DarkModeButton(this.$target);
 
     this.searchInput = new SearchInput(this.$target, {
-      onSearch: this.handleSearch.bind(this),
+      onSearch: await this.handleSearch.bind(this),
+      lastKeyword,
     });
 
     this.randomButton = new RandomButton(this.$target, {
-      onClick: this.handleRandomSearch.bind(this),
+      onClick: await this.handleRandomSearch.bind(this),
     });
 
     this.searchResult = new SearchResult(this.$target, {
       initialData: this.state.cats,
-      onClick: this.handleCatSelect.bind(this),
+      onClick: await this.handleCatSelect.bind(this),
     });
 
     this.imageInfo = new ImageInfo(this.$target, {
@@ -46,8 +49,6 @@ export default class App extends Component {
       },
       onClose: this.handleModalClose.bind(this),
     });
-
-    await restoreLastSearch(this.handleLastSearch.bind(this));
   }
 
   async handleSearch(keyword) {
@@ -79,11 +80,11 @@ export default class App extends Component {
     try {
       this.loading.setState({ isLoading: true });
       const { data } = await api.fetchDetailCat(image.id);
-      this.searchResult.setState({
+      this.imageInfo.setState({
         selectedCat: data,
         modalVisible: true,
       });
-      this.loading.setState({ isLoading: true });
+      this.loading.setState({ isLoading: false });
     } catch (error) {
       console.error(error);
       this.loading.setState({ isLoading: false });
@@ -91,13 +92,9 @@ export default class App extends Component {
   }
 
   handleModalClose() {
-    this.setState({
+    this.imageInfo.setState({
       modalVisible: false,
       selectedCat: null,
     });
-  }
-
-  handleLastSearch(data) {
-    this.setState({ cats: data });
   }
 }

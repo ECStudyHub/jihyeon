@@ -15,6 +15,9 @@ export default class SearchInput extends Component {
     if ($input) {
       $input.focus();
     }
+    if (this.props.lastKeyword) {
+      $input.value = this.props.lastKeyword;
+    }
   }
 
   setEvent() {

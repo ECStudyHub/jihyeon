@@ -10,18 +10,18 @@ export default class ImageInfo extends Component {
 
   setup() {
     this.state = {
-      visible: this.props.data.visible,
-      image: this.props.data.image,
+      modalVisible: this.props.data.modalVisible,
+      selectedCat: this.props.data.selectedCat,
     };
 
     window.addEventListener("resize", this.handleResize.bind(this));
   }
 
   template() {
-    const { visible, image } = this.state;
-    if (!visible) return "";
+    const { modalVisible, selectedCat } = this.state;
+    if (!modalVisible) return "";
 
-    if (!image) {
+    if (!selectedCat) {
       return `
         <div class="ImageInfo">
           <div class="content-wrapper">
@@ -30,7 +30,7 @@ export default class ImageInfo extends Component {
         </div>`;
     }
 
-    const { name, url, temperament, origin } = image;
+    const { name, url, temperament, origin } = selectedCat;
     return `
       <div class="ImageInfo">
         <div class="content-wrapper">
@@ -48,7 +48,7 @@ export default class ImageInfo extends Component {
   }
 
   mounted() {
-    if (this.state.visible) {
+    if (this.state.modalVisible) {
       this.adjustWidth();
     }
   }
@@ -80,7 +80,7 @@ export default class ImageInfo extends Component {
   }
 
   handleResize() {
-    if (this.state.visible) {
+    if (this.state.modalVisible) {
       this.adjustWidth();
     }
   }

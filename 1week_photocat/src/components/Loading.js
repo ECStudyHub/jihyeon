@@ -3,7 +3,7 @@ import Component from "./Component.js";
 export default class Loading extends Component {
   constructor($target, props) {
     const $container = document.createElement("div");
-    $container.className = "loading";
+    $container.className = "loading-container";
     $target.appendChild($container);
     super($container, props);
   }
@@ -19,7 +19,7 @@ export default class Loading extends Component {
   }
   mounted() {
     const { isLoading } = this.state;
-    const $loading = document.querySelector(".loading");
+    const $loading = this.$target.querySelector(".loading");
 
     if (isLoading) {
       $loading.style.display = "block";

@@ -38,7 +38,7 @@ export default class SearchResult extends Component {
       if ($item) {
         const items = Array.from(this.$target.querySelectorAll(".item"));
         const index = items.indexOf($item);
-        this.onClick(this.state.data[index]);
+        onClick(this.state.data[index]);
       }
     });
   }
