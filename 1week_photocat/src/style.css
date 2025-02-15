@@ -138,6 +138,23 @@ body * {
   --bg-color: #fff;
   --text-color: #000;
 }
+.loading-container {
+  position: fixed;
+
+  top: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  background-color: rgba(255, 2550, 00, 0.3);
+  z-index: 1000;
+}
 
 .loading {
   position: fixed;
@@ -152,6 +169,7 @@ body * {
   justify-content: center;
   align-items: center;
   text-align: center;
+  display: block;
 
   background-color: rgba(255, 2550, 00, 0.3);
   z-index: 1000;

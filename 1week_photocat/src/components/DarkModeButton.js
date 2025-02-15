@@ -1,44 +1,49 @@
-export default class DarkModeButton {
-  constructor({ $target }) {
-    const $label = document.createElement("label");
-    $label.className = "DarkModeLabel";
-    $target.appendChild($label);
+import Component from "./Component.js";
 
-    const $darkModeTitle = document.createElement("span");
-    $darkModeTitle.innerText = "다크모드 활성화";
-    $label.appendChild($darkModeTitle);
+export default class DarkModeButton extends Component {
+  constructor($target, props) {
+    const $container = document.createElement("div");
+    $container.className = "darkmode-button";
+    $target.appendChild($container);
+    super($container, props);
+  }
 
-    const $darkModeInput = document.createElement("input");
-    $darkModeInput.setAttribute("type", "checkbox");
-    $darkModeInput.className = "DarkModeInput";
+  setup() {
+    this.state = {
+      isDarkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
+    };
+  }
 
-    $label.appendChild($darkModeInput);
+  template() {
+    const { isDarkMode } = this.state;
+    return `
+    <label class="DarkModeLabel">
+      <span>다크모드 활성화</span>
+      <input type="checkbox" class="DarkModeInput" ${isDarkMode ? "checked" : ""} />
+      <span class="DarkModeStatus">${isDarkMode ? "다크모드" : "라이트모드"}</span>
+    </label>`;
+  }
 
-    const $darkModeStatus = document.createElement("span");
-    $darkModeStatus.innerText = "";
-    $label.appendChild($darkModeStatus);
-
-    const $document = document.documentElement;
-
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      $darkModeStatus.innerText = "다크모드";
-      $darkModeInput.checked = true;
-      $document.classList.add("dark-mode");
+  mounted() {
+    if (this.state.isDarkMode) {
+      document.documentElement.classList.add("dark-mode");
     }
+  }
 
-    $darkModeInput.addEventListener("change", (e) => {
-      if (e.target.checked) {
-        $darkModeStatus.innerText = "다크모드";
+  setEvent() {
+    this.addEvent("change", ".DarkModeInput", (e) => {
+      const isDarkMode = e.target.checked;
+      this.setState({ isDarkMode });
+
+      const $document = document.documentElement;
+
+      if (isDarkMode) {
         $document.classList.remove("light-mode");
         $document.classList.add("dark-mode");
       } else {
-        $darkModeStatus.innerText = "라이트모드";
         $document.classList.remove("dark-mode");
         $document.classList.add("light-mode");
       }
     });
-
-    console.log("DarkModeInput created.", this);
   }
-  render() {}
 }

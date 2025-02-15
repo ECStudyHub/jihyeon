@@ -1,11 +1,17 @@
-export default class RandomButton {
-  constructor({ $target, onClick }) {
-    const $randomButton = document.createElement("button");
-    $randomButton.innerText = "랜덤한 고양이를 받아보세요.";
-    $randomButton.className = "random-button";
-    $randomButton.addEventListener("click", onClick);
-    $target.appendChild($randomButton);
+import Component from "./Component.js";
+
+export default class RandomButton extends Component {
+  constructor($target, props) {
+    const $container = document.createElement("div");
+    $container.className = "random-button";
+    $target.appendChild($container);
+    super($container, props);
+  }
+  template() {
+    return `<button class="random-button" type="button" >랜덤한 고양이를 받아보세요.</button>`;
   }
 
-  render() {}
+  setEvent() {
+    this.addEvent("click", ".random-button", this.props.onClick);
+  }
 }

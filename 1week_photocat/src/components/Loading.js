@@ -1,32 +1,36 @@
-export default class Loading {
-  constructor({ $target, state }) {
-    const template = `
+import Component from "./Component.js";
+
+export default class Loading extends Component {
+  constructor($target, props) {
+    const $container = document.createElement("div");
+    $container.className = "loading-container";
+    $target.appendChild($container);
+    super($container, props);
+  }
+  setup() {
+    this.state = { isLoading: this.props.isLoading };
+  }
+  template() {
+    return `
         <div class='loading'>
             <div>loading... </div>
             <button class="reload">새로고침</button>
         </div>`;
-    $target.innerHTML += template;
-    this.state = state;
-    this.render();
   }
+  mounted() {
+    const { isLoading } = this.state;
+    const $loading = this.$target.querySelector(".loading");
 
-  setState(nextState) {
-    this.state = nextState;
-    this.render();
-  }
-
-  render() {
-    const $loading = document.querySelector(".loading");
-    const $reload = document.querySelector(".reload");
-
-    $reload.addEventListener("click", () => {
-      window.location.reload();
-    });
-
-    if (this.state) {
+    if (isLoading) {
       $loading.style.display = "block";
     } else {
       $loading.style.display = "none";
     }
+  }
+
+  setEvent() {
+    this.addEvent("click", ".reload", () => {
+      window.location.reload();
+    });
   }
 }

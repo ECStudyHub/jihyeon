@@ -1,4 +1,5 @@
 import { api } from "./api.js";
+import Component from "./components/Component.js";
 import DarkModeButton from "./components/DarkModeButton.js";
 import ImageInfo from "./components/ImageInfo.js";
 import Loading from "./components/Loading.js";
@@ -9,74 +10,91 @@ import { restoreLastSearch, storeSearch } from "./utils/storeLocalStorage.js";
 
 console.log("app is running!");
 
-export default class App {
-  $target = null;
-  data = [];
+export default class App extends Component {
+  async setup() {
+    const { lastData, lastKeyword } = restoreLastSearch();
 
-  constructor($target) {
-    this.$target = $target;
-    this.loading = new Loading({ $target, state: false });
+    this.state = {
+      cats: lastData ?? [],
+      isLoading: false,
+      modalVisible: false,
+      selectedCat: null,
+      isDarkMode: false,
+    };
 
-    this.$darkMode = new DarkModeButton({
-      $target,
+    this.loading = new Loading(this.$target, {
+      isLoading: this.state.isLoading,
     });
 
-    this.searchInput = new SearchInput({
-      $target,
-      onSearch: async (keyword) => {
-        this.loading.setState(true);
-        const { data } = await api.fetchCats(keyword);
-        this.loading.setState(false);
-        this.setState(data);
-        storeSearch(keyword, data);
-      },
+    this.darkMode = new DarkModeButton(this.$target);
+
+    this.searchInput = new SearchInput(this.$target, {
+      onSearch: await this.handleSearch.bind(this),
+      lastKeyword,
     });
 
-    this.randomButton = new RandomButton({
-      $target,
-      onClick: async () => {
-        this.loading.setState(true);
-        const { data } = await api.fetchRandDomCats();
-        this.loading.setState(false);
-        this.setState(data);
-      },
+    this.randomButton = new RandomButton(this.$target, {
+      onClick: await this.handleRandomSearch.bind(this),
     });
 
-    this.searchResult = new SearchResult({
-      $target,
-      initialData: this.data,
-      onClick: async (image) => {
-        this.loading.setState(true);
-        await api.fetchDetailCat(image.id).then(({ data }) => {
-          this.imageInfo.setState({
-            visible: true,
-            image: data,
-          });
-        });
-        this.loading.setState(false);
-      },
+    this.searchResult = new SearchResult(this.$target, {
+      initialData: this.state.cats,
+      onClick: await this.handleCatSelect.bind(this),
     });
 
-    this.imageInfo = new ImageInfo({
-      $target,
+    this.imageInfo = new ImageInfo(this.$target, {
       data: {
-        visible: false,
-        image: null,
+        visible: this.state.modalVisible,
+        image: this.state.selectedCat,
       },
-      onClose: () => {
-        this.imageInfo.setState({
-          visible: false,
-          image: null,
-        });
-      },
+      onClose: this.handleModalClose.bind(this),
     });
-
-    restoreLastSearch(this.setState.bind(this));
   }
 
-  setState(nextData) {
-    console.log(this);
-    this.data = nextData;
-    this.searchResult.setState(nextData);
+  async handleSearch(keyword) {
+    try {
+      this.searchInput.setState({ isLoading: true });
+      const { data } = await api.fetchCats(keyword);
+      this.searchInput.setState({ cats: data });
+      this.loading.setState({ isLoading: false });
+      storeSearch(keyword, data);
+    } catch (error) {
+      console.error(error);
+      this.searchInput.setState({ isLoading: false });
+    }
+  }
+
+  async handleRandomSearch() {
+    try {
+      this.loading.setState({ isLoading: true });
+      const { data } = await api.fetchRandDomCats();
+      this.loading.setState({ cats: data });
+      this.loading.setState({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+      this.loading.setState({ isLoading: false });
+    }
+  }
+
+  async handleCatSelect(image) {
+    try {
+      this.loading.setState({ isLoading: true });
+      const { data } = await api.fetchDetailCat(image.id);
+      this.imageInfo.setState({
+        selectedCat: data,
+        modalVisible: true,
+      });
+      this.loading.setState({ isLoading: false });
+    } catch (error) {
+      console.error(error);
+      this.loading.setState({ isLoading: false });
+    }
+  }
+
+  handleModalClose() {
+    this.imageInfo.setState({
+      modalVisible: false,
+      selectedCat: null,
+    });
   }
 }
