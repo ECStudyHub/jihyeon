@@ -19,21 +19,21 @@ export default class Component<P extends ComponentProps = ComponentProps, S exte
     this.setEvent();
     this.render();
   }
-  setup(): void {}
-  mounted(): void {}
-  template(): string {
+  protected setup(): void {}
+  protected mounted(): void {}
+  public template(): string {
     return "";
   }
-  render(): void {
+  public render(): void {
     this.$target.innerHTML = this.template();
     this.mounted();
   }
-  setEvent(): void {}
-  setState(newState: Partial<S>): void {
+  public setEvent(): void {}
+  public setState(newState: Partial<S>): void {
     this.state = { ...this.state, ...newState };
     this.render();
   }
-  addEvent<K extends keyof HTMLElementEventMap>(
+  public addEvent<K extends keyof HTMLElementEventMap>(
     eventType: K,
     selector: string,
     callback: (event: HTMLElementEventMap[K]) => void

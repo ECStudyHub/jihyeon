@@ -17,7 +17,7 @@ export default class PageComponent<P extends PageProps = PageProps, S extends St
     this.initializePage();
   }
 
-  private initializePage(): void {
+  protected initializePage(): void {
     this.resetScroll();
   }
 
